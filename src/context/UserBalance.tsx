@@ -44,6 +44,6 @@ export const UserBalanceProvider: FC = ({ children }) => {
   );
 };
 
-export const useBalance = () => {
+export const useUserBalance = () => {
   return useContext(UserBalanceContext);
 };
