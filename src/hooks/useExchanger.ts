@@ -1,13 +1,13 @@
 import { parseUnits } from "@ethersproject/units";
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useBorrower } from "../hooks/contracts/useBorrower";
 import { useFlashLoan } from "../hooks/contracts/useFlashLoan";
 import { useLpToken } from "../hooks/contracts/useLpToken";
 import { usePool } from "../hooks/contracts/usePool";
 import { useRainbowToken } from "../hooks/contracts/useRainbowToken";
 import { constants } from "ethers";
-import { useBalance } from "../context/UserBalance";
-import { useWeb3React } from "@web3-react/core";
+import { useUserBalance } from "../context/UserBalance";
+import { useTypedWeb3React } from "./useTypedWeb3React";
 
 export const useExchanger = () => {
   const pool = usePool();
@@ -15,48 +15,54 @@ export const useExchanger = () => {
   const lpToken = useLpToken();
   const flashLoan = useFlashLoan();
   const borrower = useBorrower();
-  const { rainbowBalance, lpTokenBalance } = useBalance();
-  const { account } = useWeb3React();
+  const { rainbowBalance, lpTokenBalance } = useUserBalance();
+  const { account } = useTypedWeb3React();
 
   const [isTransactionLoading, setIsTransactionLoading] = useState(false);
 
-  const handleFlashLoan = async (amountTokens: string) => {
-    if (!rainbowToken || !borrower || !flashLoan) return;
-    setIsTransactionLoading(true);
+  const handleFlashLoan = useCallback(
+    async (amountTokens: string) => {
+      if (!rainbowToken || !borrower || !flashLoan) return;
+      setIsTransactionLoading(true);
 
-    const tx = await rainbowToken.approve(
-      borrower.address,
-      constants.MaxUint256
-    );
+      const tx = await rainbowToken.approve(
+        borrower.address,
+        constants.MaxUint256
+      );
 
-    await tx.wait();
+      await tx.wait();
 
-    const borrowTx = await flashLoan.borrowTokens(
-      borrower.address,
-      rainbowToken.address,
-      parseUnits(amountTokens)
-    );
-    await borrowTx.wait();
-    setIsTransactionLoading(false);
-  };
+      const borrowTx = await flashLoan.borrowTokens(
+        borrower.address,
+        rainbowToken.address,
+        parseUnits(amountTokens)
+      );
+      await borrowTx.wait();
+      setIsTransactionLoading(false);
+    },
+    [borrower, flashLoan, rainbowToken]
+  );
 
-  const handleDeposit = async (amountTokens: string) => {
-    if (!pool) return;
-    setIsTransactionLoading(true);
-    const tx = await pool.deposit(parseUnits(amountTokens));
-    await tx.wait();
-    setIsTransactionLoading(false);
-  };
+  const handleDeposit = useCallback(
+    async (amountTokens: string) => {
+      if (!pool) return;
+      setIsTransactionLoading(true);
+      const tx = await pool.deposit(parseUnits(amountTokens));
+      await tx.wait();
+      setIsTransactionLoading(false);
+    },
+    [pool]
+  );
 
-  const handleApprove = async () => {
+  const handleApprove = useCallback(async () => {
     if (!pool || !rainbowToken || !rainbowBalance) return;
     setIsTransactionLoading(true);
     const tx = await rainbowToken.approve(pool.address, rainbowBalance);
     await tx.wait();
     setIsTransactionLoading(false);
-  };
+  }, [pool, rainbowBalance, rainbowToken]);
 
-  const handleWithdraw = async () => {
+  const handleWithdraw = useCallback(async () => {
     if (!pool || !rainbowToken || !rainbowBalance || !account || !lpToken)
       return;
 
@@ -69,17 +75,19 @@ export const useExchanger = () => {
     const txWithdraw = await pool.withdraw();
     await txWithdraw.wait();
     setIsTransactionLoading(false);
-  };
+  }, [account, lpToken, lpTokenBalance, pool, rainbowBalance, rainbowToken]);
 
-  const handleCollectRewards = async () => {
+  const handleCollectRewards = useCallback(async () => {
     if (!lpToken || !account) return;
     setIsTransactionLoading(true);
     const tx = await lpToken.collectRewards();
     await tx.wait();
     setIsTransactionLoading(false);
-  };
+  }, [account, lpToken]);
 
-  const userHasLpTokens = () => (Number(lpTokenBalance) > 0 ? true : false);
+  const userHasLpTokens = useMemo(() => {
+    return Number(lpTokenBalance) > 0;
+  }, [lpTokenBalance]);
 
   return {
     handleDeposit,

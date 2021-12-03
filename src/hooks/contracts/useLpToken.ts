@@ -1,14 +1,13 @@
 import { useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
-import { Web3Provider } from "@ethersproject/providers";
 import {
   ChainId,
   getContractAddressesForChainOrThrow,
   LpToken__factory,
 } from "rainbow-abis";
+import { useTypedWeb3React } from "../useTypedWeb3React";
 
 export const useLpToken = () => {
-  const { library, account } = useWeb3React<Web3Provider>();
+  const { library, account } = useTypedWeb3React();
 
   return useMemo(() => {
     if (!library || !account) return null;

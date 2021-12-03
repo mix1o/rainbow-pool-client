@@ -1,11 +1,11 @@
-import { useWeb3React } from "@web3-react/core";
 import { useEffect, useState } from "react";
 import { usePool } from "./contracts/usePool";
 import { useRainbowToken } from "./contracts/useRainbowToken";
 import { useDebounce } from "./useDebounce";
 import { BigNumber } from "@ethersproject/bignumber";
 import { parseUnits } from "@ethersproject/units";
-import { useBalance } from "../context/UserBalance";
+import { useUserBalance } from "../context/UserBalance";
+import { useTypedWeb3React } from "./useTypedWeb3React";
 
 enum ErrorMessages {
   Balance = "Amount exceeds balance",
@@ -14,7 +14,7 @@ enum ErrorMessages {
 export const useInputValidation = (amountTokens: string) => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const { rainbowBalance } = useBalance();
+  const { rainbowBalance } = useUserBalance();
 
   const [approvalRequired, setApprovalRequired] = useState(false);
   const [allowDeposit, setAllowDeposit] = useState(false);
@@ -22,7 +22,7 @@ export const useInputValidation = (amountTokens: string) => {
   const debouncedInput = useDebounce(amountTokens, 500);
 
   const rainbowToken = useRainbowToken();
-  const { account } = useWeb3React();
+  const { account } = useTypedWeb3React();
   const pool = usePool();
   const isValidInput = debouncedInput && Number(debouncedInput) > 0;
 
