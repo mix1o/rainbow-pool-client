@@ -8,14 +8,13 @@ export const ToggleTheme = styled.button<{ isDark: boolean }>`
   padding: 2px;
   display: flex;
   margin: 10px 0;
-
-  div {
-    transition: transform 0.3s ease;
-    border-radius: 100px;
-    height: 13px;
-    width: 13px;
-    background: ${props => (props.isDark ? "#3478f7" : "#af86b9")};
-    transform: ${props =>
-      props.isDark ? "translateX(20px)" : "translateX(0px)"};
-  }
+`;
+export const Circle = styled.div<{ isDark: boolean }>`
+  transition: transform 0.3s ease;
+  border-radius: 100px;
+  height: 13px;
+  width: 13px;
+  background: ${props => (props.isDark ? "#3478f7" : "#af86b9")};
+  transform: ${props =>
+    props.isDark ? "translateX(20px)" : "translateX(0px)"};
 `;
