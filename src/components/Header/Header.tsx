@@ -1,10 +1,5 @@
-import { FC, useEffect, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
-import { InjectedConnector } from "@web3-react/injected-connector";
-import { useEagerConnect } from "../../hooks/useEagerConnect";
-import { useInactiveListener } from "../../hooks/useInactiveListener";
+import { FC, useState } from "react";
 import { formatUnits } from "@ethersproject/units";
-import { Web3Provider } from "@ethersproject/providers";
 import { useRainbowToken } from "../../hooks/contracts/useRainbowToken";
 import {
   HeaderButton,
@@ -13,34 +8,22 @@ import {
   Heading,
 } from "./HeaderStyled";
 import { TransactionLoading, SmallSpinner } from "../../animation/Spinner";
-import { useBalance } from "../../context/UserBalance";
-
-const MetaMask = new InjectedConnector({ supportedChainIds: [1, 4] });
+import { useUserBalance } from "../../context/UserBalance";
+import { useTypedWeb3React } from "../../hooks/useTypedWeb3React";
+import { useConnection } from "../../hooks/useConnection";
+import { useMetaMask } from "../../connectors/MetaMask";
 
 const Header: FC = ({ children }) => {
-  const { connector, account, activate, active, chainId } =
-    useWeb3React<Web3Provider>();
+  const { account, active, chainId } = useTypedWeb3React();
 
-  const [activatingConnector, setActivatingConnector] = useState();
+  useConnection();
 
+  const { connectMetaMask } = useMetaMask();
   const [isTransactionLoading, setIsTransactionLoading] = useState(false);
 
-  const { ethBalance } = useBalance();
+  const { ethBalance } = useUserBalance();
 
   const rainbowToken = useRainbowToken();
-
-  useEffect(() => {
-    if (activatingConnector === connector) {
-      setActivatingConnector(undefined);
-    }
-  }, [activatingConnector, connector]);
-
-  const triedEager = useEagerConnect(MetaMask);
-  useInactiveListener(!triedEager || !activatingConnector, MetaMask);
-
-  const connectMetaMask = () => {
-    activate(MetaMask);
-  };
 
   const convertAddress = () => {
     return `${account?.substring(0, 5)}...${account?.substring(
@@ -78,8 +61,8 @@ const Header: FC = ({ children }) => {
               <span>Connected:</span> {convertAddress()}
             </p>
             <p>
-              <span>Balance:</span>{" "}
-              {formatUnits(ethBalance ? ethBalance : "0", 18)} ETH
+              <span>Balance:</span> {formatUnits(ethBalance ? ethBalance : "0")}{" "}
+              ETH
             </p>
           </DetailsContainer>
         )}

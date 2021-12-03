@@ -1,25 +1,25 @@
-import { useWeb3React } from "@web3-react/core";
 import { useEffect, FC } from "react";
-import { useBalance } from "../../context/UserBalance";
+import { useUserBalance } from "../../context/UserBalance";
 import { useLpToken } from "../../hooks/contracts/useLpToken";
 import { useRainbowToken } from "../../hooks/contracts/useRainbowToken";
+import { useTypedWeb3React } from "../../hooks/useTypedWeb3React";
 
 const Updater: FC = () => {
-  const { account } = useWeb3React();
   const rainbowToken = useRainbowToken();
   const lpToken = useLpToken();
 
-  const { library } = useWeb3React();
+  const { account, library } = useTypedWeb3React();
   const {
     rainbowBalance,
     setRainbowBalance,
     lpTokenBalance,
     setLpTokenBalance,
+    ethBalance,
     setEthBalance,
-  } = useBalance();
+  } = useUserBalance();
 
   useEffect(() => {
-    const loadUserBalance = async () => {
+    const loadUserRainbowBalance = async () => {
       if (!account || !rainbowToken) return;
       const newBalance = await rainbowToken.balanceOf(account);
       if (rainbowBalance) {
@@ -32,11 +32,11 @@ const Updater: FC = () => {
     };
 
     if (!rainbowBalance) {
-      loadUserBalance();
+      loadUserRainbowBalance();
       return;
     }
     const interval = setInterval(() => {
-      loadUserBalance();
+      loadUserRainbowBalance();
     }, 1000);
 
     return () => clearInterval(interval);
@@ -47,24 +47,50 @@ const Updater: FC = () => {
       if (!account || !lpToken) return;
       const newLpTokens = await lpToken.balanceOf(account);
       if (lpTokenBalance) {
-        if (newLpTokens && !newLpTokens.eq(lpTokenBalance))
+        if (newLpTokens && !newLpTokens.eq(lpTokenBalance)) {
           setLpTokenBalance(newLpTokens);
+        }
       } else {
         setLpTokenBalance(newLpTokens);
       }
     };
 
-    userLpTokensBalance();
+    if (!lpTokenBalance) {
+      userLpTokensBalance();
+      return;
+    }
+
+    const interval = setInterval(() => {
+      userLpTokensBalance();
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, [rainbowBalance, account, lpToken, setLpTokenBalance, lpTokenBalance]);
 
   useEffect(() => {
     const getEthBalance = async () => {
       if (!account || !library) return;
       const eth = await library.getBalance(account);
-      setEthBalance(eth);
+      if (ethBalance) {
+        if (eth && !eth.eq(ethBalance)) {
+          setEthBalance(eth);
+        }
+      } else {
+        setEthBalance(eth);
+      }
     };
-    getEthBalance();
-  }, [account, library, rainbowBalance, setEthBalance]);
+
+    if (!ethBalance) {
+      getEthBalance();
+      return;
+    }
+
+    const interval = setInterval(() => {
+      getEthBalance();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [account, library, rainbowBalance, setEthBalance, ethBalance]);
 
   return <></>;
 };

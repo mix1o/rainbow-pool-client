@@ -6,27 +6,23 @@ import {
   OptionButton,
   Container,
 } from "./ExchangerStyled";
-import { useWeb3React } from "@web3-react/core";
 import { formatUnits } from "@ethersproject/units";
 import {
   SmallSpinner,
   Loading,
   TransactionLoading,
 } from "../../animation/Spinner";
-import { useBalance } from "../../context/UserBalance";
+import { useUserBalance } from "../../context/UserBalance";
 import { useExchanger } from "../../hooks/useExchanger";
-import { Web3Provider } from "@ethersproject/providers";
+import { options } from "../../enums/options";
+import { useTypedWeb3React } from "../../hooks/useTypedWeb3React";
 
 const Exchanger: FC = () => {
-  const options = {
-    pool: "POOL",
-    flashLoan: "FLASHLOAN",
-  };
-
   const [userChoice, setUserChoice] = useState(options.pool);
   const [amountTokens, setAmountTokens] = useState("0");
-  const { account } = useWeb3React<Web3Provider>();
-  const { rainbowBalance, lpTokenBalance } = useBalance();
+
+  const { account } = useTypedWeb3React();
+  const { rainbowBalance, lpTokenBalance } = useUserBalance();
   const { loading, errorMsg, approvalRequired, allowDeposit, isValidInput } =
     useInputValidation(amountTokens);
 
@@ -52,13 +48,13 @@ const Exchanger: FC = () => {
       <Container>
         <div className="buttons-container no-wrap">
           <OptionButton
-            active={userChoice === options.pool ? true : false}
+            active={userChoice === options.pool}
             onClick={() => setUserChoice(options.pool)}
           >
             Pool
           </OptionButton>
           <OptionButton
-            active={userChoice !== options.pool ? true : false}
+            active={userChoice !== options.pool}
             onClick={() => setUserChoice(options.flashLoan)}
           >
             Flash loan
@@ -89,7 +85,7 @@ const Exchanger: FC = () => {
                 <div>
                   <ActionButton
                     onClick={() => handleFlashLoan(amountTokens)}
-                    correct={!isValidInput ? false : true}
+                    correct={!!isValidInput}
                   >
                     Borrow Tokens
                   </ActionButton>
@@ -116,15 +112,15 @@ const Exchanger: FC = () => {
                   <div>
                     <ActionButton
                       onClick={handleWithdraw}
-                      correct={userHasLpTokens()}
-                      disabled={!userHasLpTokens()}
+                      correct={userHasLpTokens}
+                      disabled={!userHasLpTokens}
                     >
                       Withdraw{" "}
                       {formatUnits(lpTokenBalance ? lpTokenBalance : "0")}
                     </ActionButton>
                     <ActionButton
-                      correct={userHasLpTokens()}
-                      disabled={!userHasLpTokens()}
+                      correct={userHasLpTokens}
+                      disabled={!userHasLpTokens}
                       onClick={handleCollectRewards}
                     >
                       Collect rewards
