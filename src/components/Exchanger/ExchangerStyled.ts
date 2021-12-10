@@ -8,16 +8,15 @@ const Container = styled.div`
     color: ${props => props.theme.errorMessage};
   }
   .actions {
-    background: ${props => props.theme.containerColor};
+    background: rgba(255, 255, 255, 0.25);
     margin-top: 30px;
     border-radius: 15px;
     padding: 30px;
-    box-shadow: 0 2px 10px 2px ${props => props.theme.darkGray};
     position: relative;
 
     h5 {
       text-align: left;
-      color: ${props => props.theme.darkGray};
+      color: ${props => props.theme.primaryWhite};
       font-size: 15px;
     }
   }
@@ -85,7 +84,7 @@ const OptionButton = styled.button<{ active: boolean }>`
 const ActionButton = styled.button<{ correct: boolean }>`
   padding: 12px 20px;
   border: none;
-  cursor: pointer;
+  cursor: ${props => (props.correct ? "pointer" : "default")};
   color: #fff;
   text-transform: uppercase;
   font-weight: 900;
@@ -94,7 +93,7 @@ const ActionButton = styled.button<{ correct: boolean }>`
   transition: background-color 0.4s ease-in-out, transform 0.3s ease;
   border-radius: 4px;
   background: ${props =>
-    props.correct ? props.theme.primaryBlue : props.theme.gray};
+    props.correct ? props.theme.primaryBlue : props.theme.darkGray};
 
   &:hover {
     transform: ${({ correct }) => (correct ? "scale(1.1)" : "none")};

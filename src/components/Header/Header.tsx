@@ -11,12 +11,13 @@ import { TransactionLoading, SmallSpinner } from "../../animation/Spinner";
 import { useUserBalance } from "../../context/UserBalance";
 import { useTypedWeb3React } from "../../hooks/useTypedWeb3React";
 import { useConnection } from "../../hooks/useConnection";
-import { useMetaMask } from "../../connectors/MetaMask";
+import { useMetaMask, MetaMask } from "../../connectors/MetaMask";
+import { convertAddress } from "../../functions/convertAddress";
 
 const Header: FC = ({ children }) => {
   const { account, active, chainId } = useTypedWeb3React();
 
-  useConnection();
+  useConnection(MetaMask);
 
   const { connectMetaMask } = useMetaMask();
   const [isTransactionLoading, setIsTransactionLoading] = useState(false);
@@ -24,13 +25,6 @@ const Header: FC = ({ children }) => {
   const { ethBalance } = useUserBalance();
 
   const rainbowToken = useRainbowToken();
-
-  const convertAddress = () => {
-    return `${account?.substring(0, 5)}...${account?.substring(
-      account.length - 4,
-      account.length
-    )}`;
-  };
 
   const handleAddTokens = async () => {
     if (!rainbowToken) return;
@@ -58,7 +52,7 @@ const Header: FC = ({ children }) => {
         {active && (
           <DetailsContainer>
             <p>
-              <span>Connected:</span> {convertAddress()}
+              <span>Connected:</span> {convertAddress(account ? account : "")}
             </p>
             <p>
               <span>Balance:</span> {formatUnits(ethBalance ? ethBalance : "0")}{" "}

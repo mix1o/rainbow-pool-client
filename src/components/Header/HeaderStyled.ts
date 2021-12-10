@@ -7,6 +7,11 @@ const HeaderContainer = styled.header`
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
+
+  .container-theme {
+    display: flex;
+    align-items: center;
+  }
 `;
 
 const Heading = styled.h3`
