@@ -17,4 +17,43 @@ body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   background-repeat: no-repeat;
 }
+
+a {
+  color: #000;
+  text-decoration: none;
+  font-size: 18px;
+  display: block;
+  margin: 10px;
+  background: #fff;
+  padding: 10px;
+  text-align: center;
+}
+a:hover{
+  color: #00f;
+}
+.container-links {
+  background: rgba(255,255,255,.2);
+  max-width: fit-content;
+  padding: 10px;
+  min-height: 300px;
+  position: fixed;
+  top: 30%;
+  transform: translateX(-90px);
+  transition: transform .3s ease-in-out; 
+  z-index: 10;
+
+  @media screen and (max-width: 780px) {
+    position: static;
+    min-width: 100%;
+    min-height: 50px;
+    top: 0;
+    transform: translateX(0);
+    margin-top: 30px;
+  }
+}
+.container-links:hover {
+  transform: translateX(0px);
+
+ 
+}
 `;

@@ -7,7 +7,7 @@ export const ToggleTheme = styled.button<{ isDark: boolean }>`
   background: ${props => props.theme.gray};
   padding: 2px;
   display: flex;
-  margin: 10px 0;
+  margin: 10px 5px;
 `;
 export const Circle = styled.div<{ isDark: boolean }>`
   transition: transform 0.3s ease;
