@@ -1,0 +1,31 @@
+export const defaultStyles = {
+  gray: "#ddd",
+  lightGray: "#d9d9d9",
+  darkGray: "#888",
+  primaryBlue: "#3478f7",
+  secondaryBlue: "#7e87f1",
+  primaryBlack: "#000",
+  secondaryBlack: "rgba(33,33,33,.9)",
+  primaryMain: "#db6b75",
+  secondaryMain: "#af86b9",
+  primaryWhite: "#fff",
+  containerColor: "#fff",
+  opacityWhite: "rgba(255, 255, 255, 0.1)",
+  errorMessage: "#ff6347",
+};
+
+export const darkStyles = {
+  gray: "#ddd",
+  lightGray: "#d9d9d9",
+  darkGray: "#888",
+  primaryBlue: "#3478f7",
+  secondaryBlue: "#7e87f1",
+  primaryBlack: "#000",
+  secondaryBlack: "rgba(33,33,33,.9)",
+  primaryMain: "#db6b75",
+  secondaryMain: "#af86b9",
+  containerColor: "#333",
+  primaryWhite: "#fff",
+  opacityWhite: "rgba(255, 255, 255, 0.1)",
+  errorMessage: "#ff6347",
+};
