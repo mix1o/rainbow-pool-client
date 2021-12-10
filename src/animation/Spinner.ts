@@ -23,7 +23,7 @@ const scaleAndRotate = keyframes`
 
 const TransactionLoading = styled.div`
   position: fixed;
-  z-index: 10;
+  z-index: 12;
   top: 0;
   right: 0;
   width: 100%;
