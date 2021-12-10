@@ -1,10 +1,10 @@
+import { InjectedConnector } from "@web3-react/injected-connector";
 import { useState, useEffect } from "react";
-import { MetaMask } from "../connectors/MetaMask";
 import { useEagerConnect } from "./useEagerConnect";
 import { useInactiveListener } from "./useInactiveListener";
 import { useTypedWeb3React } from "./useTypedWeb3React";
 
-export const useConnection = () => {
+export const useConnection = (type: InjectedConnector) => {
   const { connector } = useTypedWeb3React();
   const [activatingConnector, setActivatingConnector] = useState();
 
@@ -14,6 +14,6 @@ export const useConnection = () => {
     }
   }, [activatingConnector, connector]);
 
-  const triedEager = useEagerConnect(MetaMask);
-  return useInactiveListener(!triedEager || !activatingConnector, MetaMask);
+  const triedEager = useEagerConnect(type);
+  return useInactiveListener(!triedEager || !activatingConnector, type);
 };
